@@ -16,7 +16,8 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "dt") redirect("/login");
+  if (!profile) redirect("/login");
+  if (profile.role === "admin") redirect("/admin");
 
   // Today's sessions with reminders that fire today
   const todayStart = new Date();

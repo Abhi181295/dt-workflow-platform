@@ -17,7 +17,8 @@ export default async function AdminPatientsPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") redirect("/dashboard");
+  if (!profile) redirect("/login");
+  if (profile.role !== "admin") redirect("/dashboard");
 
   const { data: patients } = await supabase
     .from("patients")

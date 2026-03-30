@@ -17,7 +17,8 @@ export default async function LogsPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") redirect("/dashboard");
+  if (!profile) redirect("/login");
+  if (profile.role !== "admin") redirect("/dashboard");
 
   const { data: rawReminders } = await supabase
     .from("reminders")

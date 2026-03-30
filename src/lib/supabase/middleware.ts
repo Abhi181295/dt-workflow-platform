@@ -39,16 +39,8 @@ export async function updateSession(request: NextRequest) {
   if (pathname === "/login" || pathname.startsWith("/auth/")) {
     if (user) {
       // Logged-in user on login page — redirect to their dashboard
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      const redirectTo =
-        profile?.role === "admin" ? "/admin" : "/dashboard";
       const url = request.nextUrl.clone();
-      url.pathname = redirectTo;
+      url.pathname = "/dashboard";
       return NextResponse.redirect(url);
     }
     return supabaseResponse;

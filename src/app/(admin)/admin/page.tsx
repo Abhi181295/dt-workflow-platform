@@ -17,7 +17,8 @@ export default async function AdminPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") redirect("/dashboard");
+  if (!profile) redirect("/login");
+  if (profile.role !== "admin") redirect("/dashboard");
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
