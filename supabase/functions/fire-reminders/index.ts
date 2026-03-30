@@ -5,16 +5,8 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const SLACK_BOT_TOKEN = Deno.env.get("SLACK_BOT_TOKEN")!;
 const APP_URL = Deno.env.get("APP_URL") || "https://your-app.vercel.app";
 
-Deno.serve(async (req: Request) => {
+Deno.serve(async () => {
   try {
-    // Verify authorization
-    const authHeader = req.headers.get("Authorization");
-    if (authHeader !== `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-      });
-    }
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     // 1. Get pending reminders whose fire_at has passed
