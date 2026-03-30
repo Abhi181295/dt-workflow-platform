@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@14 . --typescript --tailwind --eslint --app --src --no-import-alias --use-npm)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/abhi/.nvm/versions/**)",
+      "Read(//Users/abhi/.volta/bin/**)",
+      "Read(//Users/abhi/.fnm/**)",
+      "Bash(brew install:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(npm --version)",
+      "Bash(npx create-next-app@14 dt-workflow --typescript --tailwind --eslint --app --src --no-import-alias --use-npm)",
+      "Bash(rm -rf dt-workflow)",
+      "Bash(npx create-next-app@14 dt-workflow --ts --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --yes)",
+      "Bash(shopt -s dotglob)",
+      "Bash(mv dt-workflow/* dt-workflow/.* .)",
+      "Bash(mkdir -p \"/tmp/dt-workflow-temp\")",
+      "Read(//tmp/**)",
+      "Bash(npx create-next-app@14 app --ts --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --yes)",
+      "Bash(cd:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn-ui@latest init -y --defaults)",
+      "Bash(npx shadcn@latest init --defaults --yes)"
+    ]
+  }
+}
