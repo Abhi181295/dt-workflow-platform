@@ -70,15 +70,20 @@ export async function updateSession(request: NextRequest) {
 
   const role = profile?.role;
 
+  // If we can't determine the role, let the page handle it (avoid redirect loop)
+  if (!role) {
+    return supabaseResponse;
+  }
+
   // Admin trying to access DT routes
-  if (pathname.startsWith("/dashboard") && role !== "dt") {
+  if (pathname.startsWith("/dashboard") && role === "admin") {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     return NextResponse.redirect(url);
   }
 
   // DT trying to access admin routes
-  if (pathname.startsWith("/admin") && role !== "admin") {
+  if (pathname.startsWith("/admin") && role === "dt") {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
