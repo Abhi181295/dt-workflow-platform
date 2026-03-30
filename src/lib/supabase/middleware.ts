@@ -29,57 +29,27 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Refresh the session — this is the primary job of the middleware
+  await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
 
-  // Allow public routes
-  if (pathname === "/login" || pathname.startsWith("/auth/")) {
-    if (user) {
-      // Logged-in user on login page — redirect to their dashboard
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
+  // Allow auth routes always
+  if (pathname === "/login" || pathname.startsWith("/auth/") || pathname.startsWith("/api/")) {
     return supabaseResponse;
   }
 
-  // Not logged in — redirect to login
-  if (!user) {
+  // Check auth for protected routes — use getSession for a quick check
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Role-based route protection
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  const role = profile?.role;
-
-  // If we can't determine the role, let the page handle it (avoid redirect loop)
-  if (!role) {
-    return supabaseResponse;
-  }
-
-  // Admin trying to access DT routes
-  if (pathname.startsWith("/dashboard") && role === "admin") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin";
-    return NextResponse.redirect(url);
-  }
-
-  // DT trying to access admin routes
-  if (pathname.startsWith("/admin") && role === "dt") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
-  }
-
+  // No role-based redirects in middleware — pages handle their own routing
   return supabaseResponse;
 }

@@ -11,13 +11,25 @@ export default async function AdminPatientsPage() {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("name, role")
     .eq("id", user.id)
     .single();
 
-  if (!profile) redirect("/login");
+  if (!profile || profileError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center space-y-2 p-6">
+          <h1 className="text-xl font-bold">Profile not found</h1>
+          <p className="text-muted-foreground text-sm">
+            Account: {user.email} | Error: {profileError?.message ?? "No profile row"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (profile.role !== "admin") redirect("/dashboard");
 
   const { data: patients } = await supabase

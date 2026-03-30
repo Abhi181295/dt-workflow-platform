@@ -10,18 +10,37 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
+  // Use service-role-free query — RLS should allow users to read own profile
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("name, role")
     .eq("id", user.id)
     .single();
 
-  if (!profile) redirect("/login");
+  // If profile can't be fetched, show a helpful message instead of looping
+  if (!profile || profileError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center space-y-2 p-6">
+          <h1 className="text-xl font-bold">Profile not found</h1>
+          <p className="text-muted-foreground text-sm">
+            Your account ({user.email}) exists but no profile was found.
+          </p>
+          <p className="text-muted-foreground text-sm">
+            Error: {profileError?.message ?? "No profile row"}
+          </p>
+          <p className="text-xs text-muted-foreground mt-4">
+            Ask your admin to check the profiles table.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Admin on DT page — redirect once
   if (profile.role === "admin") redirect("/admin");
 
-  // Today's sessions with reminders that fire today
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  // Today's sessions
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
 

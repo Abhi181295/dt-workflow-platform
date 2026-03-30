@@ -9,11 +9,6 @@ export default async function Home() {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  redirect(profile?.role === "admin" ? "/admin" : "/dashboard");
+  // Always go to dashboard — it will redirect admins to /admin
+  redirect("/dashboard");
 }

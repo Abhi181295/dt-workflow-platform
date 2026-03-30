@@ -38,21 +38,9 @@ export default function LoginPage() {
       return;
     }
 
-    // Fetch role and redirect
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      router.push(profile?.role === "admin" ? "/admin" : "/dashboard");
-      router.refresh();
-    }
+    // Redirect — the dashboard page will handle role-based routing
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
